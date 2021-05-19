@@ -6,35 +6,26 @@ using namespace std;
 
 string listKota[length] = {"Arad", "Zerind", "Oradea", "Timisoara", "Lugoj", "Mehadia","Drobeta","Sibiu","Rimnicu-Vilcea","Craiova","Fagaras","Pitesti","Bucharest"};
 vector<int> path;
-vector<pair<vector<int>, int>> pathCost;
+vector<pair<vector<int>, int>> panjangJalan;
 int visited[length] = {0};
 int data[length][length] = {
-	{0, 75, -1,118, -1, -1, -1,140, -1, -1, -1, -1, -1 },
-	{-1,  0, 71, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-	{-1, -1,  0, -1, -1, -1, -1,151, -1, -1, -1, -1, -1},
-	{-1, -1, -1,  0,111, -1, -1, -1, -1, -1, -1, -1, -1},
-	{-1, -1, -1, -1,  0, 70, -1, -1, -1, -1, -1, -1, -1},
-	{-1, -1, -1, -1, -1,  0, 75, -1, -1, -1, -1, -1, -1},
-	{-1, -1, -1, -1, -1, -1,  0, -1, -1,120, -1, -1, -1},
-	{-1, -1, -1, -1, -1, -1, -1,  0, 80, -1, 99, -1, -1},
-	{-1, -1, -1, -1, -1, -1, -1, -1,  0,146, -1, 97, -1},
-	{-1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1,138, -1},
-	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1, 211},
-	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, 101},
-	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0}
+	{0, 75, -1, 118, -1, -1, -1, 140, -1, -1, -1, -1, -1},
+	{75, 0, 71, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{-1, 71, 0, -1, -1, -1, -1, 151, -1, -1, -1, -1, -1},
+	{118, -1, -1, 0, 111, -1, -1, -1, -1, -1, -1, -1, -1},
+	{-1, -1, -1, 111, 0, 70, -1, -1, -1, -1, -1, -1, -1},
+	{-1, -1, -1, -1, 70, 0, 75, -1, -1, -1, -1, -1, -1},
+	{-1, -1, -1, -1, -1, 75, 0, -1, -1, 120, -1, -1, -1},
+	{140, -1, 151, -1, -1, -1, -1, 0, 80, -1, 99, -1, -1},
+	{-1, -1, -1, -1, -1, -1, -1, 80, 0, 146, -1, 97, -1},
+	{-1, -1, -1, -1, -1, -1, 120, -1, 146, 0, -1, 138, -1},
+	{-1, -1, -1, -1, -1, -1, -1, 99, -1, -1, 0, -1, 211},
+	{-1, -1, -1, -1, -1, -1, -1, -1, 97, 138, -1, 0, 101},
+	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 211, 101, 0},
 };
 
-void createAdjacencyMatrix(){
-	for(int i = 0; i < length; i++){
-		for(int j = 0; j < length; j++){
-			if(data[i][j] != -1){
-				data[j][i] = data[i][j];			}
-		}
-	}
-}
-
-int nextOutdegree(int interrupt, int loc){
-	for(int i = interrupt + 1; i < length; i++){
+int nextNode(int x, int loc){
+	for(int i = x + 1; i < length; i++){
 		if(data[loc][i] > 0 && visited[i] == 0){
 			return i;
 		}
@@ -55,13 +46,13 @@ void DFS(int start, int end){
 
 	visited[start] = 1;
 	path.push_back(start);
-	while((loc = nextOutdegree(loc, start)) != -1){
+	while((loc = nextNode(loc, start)) != -1){
 		if(loc == end){
 			cout<<"jalan : ";
 			for(int i = 0; i < path.size(); i++){
 				cout<<listKota[path[i]]<<" => ";
 				cost = lengthCount();
-				pathCost.push_back(pair<vector<int>, int>(path, cost));
+				panjangJalan.push_back(pair<vector<int>, int>(path, cost));
 			}
 			cout<<listKota[end]<<endl<<"panjang : " << cost<<endl;
 			break;
@@ -72,11 +63,11 @@ void DFS(int start, int end){
 	}
 }
 
-int shorthestPath(vector<pair<vector<int>, int>> pathCost){
+int shorthestPath(vector<pair<vector<int>, int>> panjangJalan){
 	int minIndex = 0, index = 1;
 
-	for(; index < pathCost.size(); index++){
-		if(pathCost[minIndex].second >= pathCost[index].second){
+	for(; index < panjangJalan.size(); index++){
+		if(panjangJalan[minIndex].second >= panjangJalan[index].second){
 			minIndex = index;
 		}
 	}return minIndex;
@@ -86,13 +77,11 @@ int main()
 {
 	int start = 0, end = 12, index = 0;
 
-	createAdjacencyMatrix();
 	DFS(start, end);
-	
-	index = shorthestPath(pathCost);
-	cout<<"min cost : ";
-	for(int i = 0; i < pathCost[index].first.size(); i++){
-		cout<<listKota[pathCost[index].first[i]]<<" -> ";
+	index = shorthestPath(panjangJalan);
+	cout<<"Jalan Terpendek : ";
+	for(int i = 0; i < panjangJalan[index].first.size(); i++){
+		cout<<listKota[panjangJalan[index].first[i]]<<" -> ";
 	}cout<<listKota[end]<<endl;
 
 	return 0;
