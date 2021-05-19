@@ -8,6 +8,8 @@ string listKota[length] = {"Arad", "Zerind", "Oradea", "Timisoara", "Lugoj", "Me
 vector<int> path;
 vector<pair<vector<int>, int>> panjangJalan;
 int visited[length] = {0};
+
+//jalan dari kota a ke kota b diilustrasikan sebagai adjacency matrix sebagai berikut
 int data[length][length] = {
 	{0, 75, -1, 118, -1, -1, -1, 140, -1, -1, -1, -1, -1},
 	{75, 0, 71, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
